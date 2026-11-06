@@ -1,0 +1,177 @@
+.player {
+    height: 70px;
+    width: 100%;
+    background: rgb(36, 36, 36);
+    border: 1px solid rgb(58, 58, 58);
+    border-radius: 12px;
+    display: grid;
+    grid-template-columns: 250px 60px 1fr;
+    align-items: center;
+    gap: 12px;
+    padding: 0 16px;
+    box-sizing: border-box;
+}
+
+.nowPlaying1 {
+    min-width: 0;
+    font-size: 15px;
+    color: rgb(230, 230, 230);
+}
+
+.playingTitle {
+    font-size: 20px;
+}
+
+.artist {
+    font-size: 14px;
+    color: rgb(160, 160, 160);
+    margin-top: 2px;
+}
+
+.nowPlaying2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nowPlaying3 {
+    display: grid;
+    grid-template-columns: 1fr 90px;
+    column-gap: 16px;
+    row-gap: 8px;
+    align-items: center;
+    min-width: 0;
+}
+
+.seekRow {
+    display: contents;
+}
+
+.skipRow {
+    grid-column: 1;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+.playerButton {
+    width: 0px;
+    height: 4px;
+    padding: 0;
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid rgb(58, 58, 58);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.playerImage2 {
+    width: 40px;
+    height: 40px;
+    display: block;
+}
+
+.progress {
+    width: 100%;
+    min-width: 0;
+    appearance: none;
+    height: 4px;
+    margin: 0;
+    margin-top: 10px;
+    background: rgb(85, 85, 85);
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.progress::-webkit-slider-thumb {
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgb(255, 255, 255);
+}
+
+.progress::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border: none;
+    border-radius: 50%;
+    background: rgb(255, 255, 255);
+}
+
+.time {
+    text-align: right;
+    white-space: nowrap;
+    font-size: 13px;
+    line-height: 1;
+    color: rgb(160, 160, 160);
+}
+
+.prevButton,
+.nextButton {
+    box-sizing: border-box;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid rgb(58, 58, 58);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.prevButton:hover,
+.nextButton:hover {
+    background: rgb(46, 46, 46);
+}
+
+.prevButton svg,
+.nextButton svg {
+    display: block;
+}
+
+@media (pointer: coarse) {
+  .playerButton,
+  .prevButton,
+  .nextButton {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .player {
+    grid-template-columns: 180px 56px 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .player {
+    grid-template-columns: 1fr;
+    row-gap: 10px;
+    padding: 12px;
+  }
+
+  .nowPlaying1 {
+    text-align: center;
+  }
+
+  .nowPlaying3 {
+    grid-template-columns: 1fr;
+  }
+
+  .time {
+    grid-column: 1;
+    justify-self: end;
+  }
+
+  .skipRow {
+    grid-column: 1;
+  }
+}

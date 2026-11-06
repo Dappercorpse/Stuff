@@ -1,0 +1,83 @@
+[
+  {
+    "id": 3,
+    "title": "$ex Appeal",
+    "artist": "Baby Keem; Too $hort",
+    "album": "Ca$ino",
+    "date": "2026",
+    "duration": "3:04",
+    "src": "/music/$ex Appeal.mp3"
+  },
+  {
+    "id": 4,
+    "title": "Sticky feat. GloRilla, Lil Wayne & Sexyy Red",
+    "artist": "Tyler, the Creator",
+    "album": "Chromakopia",
+    "date": "2024",
+    "duration": "4:15",
+    "src": "/music/08. Sticky feat. GloRilla, Lil Wayne & Sexyy Red - (SongsLover.com).mp3"
+  },
+  {
+    "id": 5,
+    "title": "Take Your Mask Off feat. Daniel Caesar",
+    "artist": "Tyler, the Creator",
+    "album": "Chromakopia",
+    "date": "2024",
+    "duration": "4:13",
+    "src": "/music/09. Take Your Mask Off feat. Daniel Caesar - (SongsLover.com).mp3"
+  },
+  {
+    "id": 6,
+    "title": "Tomorrow",
+    "artist": "Tyler, the Creator",
+    "album": "Chromakopia",
+    "date": "2024",
+    "duration": "3:02",
+    "src": "/music/10. Tomorrow - (SongsLover.com).mp3"
+  },
+  {
+    "id": 7,
+    "title": "Thought I Was Dead feat. Schoolboy Q",
+    "artist": "Tyler, the Creator",
+    "album": "Chromakopia",
+    "date": "2024",
+    "duration": "3:27",
+    "src": "/music/11. Thought I Was Dead feat. Schoolboy Q - (SongsLover.com).mp3"
+  },
+  {
+    "id": 8,
+    "title": "Like Him",
+    "artist": "Tyler, the Creator",
+    "album": "Chromakopia",
+    "date": "2024",
+    "duration": "4:38",
+    "src": "/music/12. Like Him - (SongsLover.com).mp3"
+  },
+  {
+    "id": 9,
+    "title": "Balloon feat. Doechii",
+    "artist": "Tyler, the Creator",
+    "album": "Chromakopia",
+    "date": "2024",
+    "duration": "2:34",
+    "src": "/music/13. Balloon feat. Doechii - (SongsLover.com).mp3"
+  },
+  {
+    "id": 1,
+    "title": "Mirror",
+    "artist": "Kendrick Lamar",
+    "album": "Mr. Morale & The Big Steppers",
+    "date": "2022",
+    "duration": "4:16",
+    "src": "/music/Mirror.mp3"
+  },
+  {
+    "id": 2,
+    "title": "Stars",
+    "artist": "JID",
+    "album": "The Forever Story",
+    "date": "2022",
+    "duration": "4:18",
+    "src": "/music/Stars.mp3"
+  }
+]
