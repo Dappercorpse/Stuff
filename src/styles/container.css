@@ -120,8 +120,8 @@
   }
 
   .play {
-    width: 22px;
-    height: 22px;
+    width: 44px;
+    height: 44px;
   }
 }
 
@@ -156,6 +156,28 @@
   .songRow {
     font-size: 14px;
   }
+  .player {
+      height: auto;
+      min-height: 0;
+      padding: 10px 12px;
+      row-gap: 8px;
+    }
+
+    .nowPlaying1 {
+      text-align: center;
+    }
+
+    .nowPlaying2 {
+      justify-content: center;
+    }
+
+    .nowPlaying3 {
+      gap: 6px;
+    }
+
+    .skipRow {
+      gap: 12px;
+    }
 }
 
 .context {

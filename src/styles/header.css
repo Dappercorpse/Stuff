@@ -55,3 +55,20 @@ button {
   width: 18px;
   height: 18px;
 }
+@media (max-width: 480px) {
+  .header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tabs,
+  .functions {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .headerItem {
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+}
