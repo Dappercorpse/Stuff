@@ -57,6 +57,41 @@ useEffect(function () {
   let audioRef = useRef(null);
   let queueNumber=queue.length;
 
+  async function uploadSong(file) {
+    let { data: userData } = await supabase.auth.getUser();
+    let userId = userData.user.id;
+    let path = userId + '/' + file.name;
+
+    let { error: uploadError } = await supabase.storage.from('music').upload(path, file);
+    if (uploadError) {
+      console.log(uploadError.message);
+      return;
+    }
+
+    let { error: insertError } = await supabase.from('songs').insert({
+      title: file.name.replace(/\.mp3$/i, ''),
+      artist: 'Unknown',
+      album: 'Unknown',
+      date: '',
+      duration: '',
+      file_path: path,
+    });
+    if (insertError) {
+      console.log(insertError.message);
+      return;
+    }
+
+    let { data } = await supabase.from('songs').select('*');
+    setSongs(data.map((row) => ({
+      id: row.id,
+      title: row.title,
+      artist: row.artist,
+      album: row.album,
+      date: row.date,
+      duration: row.duration,
+      src: '/music/' + row.file_path,
+    })));
+  }
   function selectSong(id) {
     if (id === queue[position]) {
       togglePlay();
@@ -146,7 +181,7 @@ useEffect(function () {
   if (!session) return <Login />;
   return (
     <>
-      <Header queueNumber={queueNumber}/>
+      <Header queueNumber={queueNumber} onUpload={uploadSong}/>
 
       <Routes>
         <Route
