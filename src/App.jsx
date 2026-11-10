@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
-import  songs  from './data/songs.json';
+import { Route, Routes } from 'react-router-dom';
 import { Container } from './components/container';
 import { Header } from './components/header';
 import { Player } from './components/player';
@@ -15,18 +14,23 @@ function App() {
   let [isPlaying, setIsPlaying] = useState(false);
   let [currentIndex, setCurrentIndex] = useState(0);
   let [query, setQuery] = useState('');
-  let [queue, setQueue] = useState([songs[0].id]);
+  let [queue, setQueue] = useState([]);
+  let [songs, setSongs]=useState([]);
   let [position, setPosition] = useState(0);
+  useEffect(
+    () => {
+      async function loadSongs() {
+        let response = await fetch('/api/songs');
+        let data = await response.json();
+        setSongs(data);
+      }
+      loadSongs();
+    }, []
+  )
+
   let song = songs.find((s) => s.id === queue[position]);
   let audioRef = useRef(null);
   let queueNumber=queue.length;
-
-  window.addEventListener('keydown', (event) => {
-    if(event.key==='SpaceBar'){
-      event.
-      togglePlay();
-    }
-  })
 
   function selectSong(id) {
     if (id === queue[position]) {

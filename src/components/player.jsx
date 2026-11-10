@@ -21,8 +21,8 @@ export function Player({ song, isPlaying, audioRef, onToggle, onNext, onPrev }) 
   return (
     <div className='player js-player'>
       <div className='nowPlaying1'>
-        <div className='playingTitle'>{song.title}</div>
-        <div className='artist'>{song.artist}</div>
+        <div className='playingTitle'>{song?.title}</div>
+        <div className='artist'>{song?.artist}</div>
       </div>
 
       <div className='nowPlaying2'>
@@ -64,7 +64,7 @@ export function Player({ song, isPlaying, audioRef, onToggle, onNext, onPrev }) 
 
       <audio
         ref={audioRef}
-        src={song.src}
+        src={song?.src}
         onTimeUpdate={(e) => setCurrentTime(e.target.currentTime)}
         onLoadedMetadata={(e) => setDuration(e.target.duration)}
         onEnded={onNext}
