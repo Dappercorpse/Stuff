@@ -116,3 +116,98 @@
 .toggleButton:hover {
   color: #eee;
 }
+
+.loginPage {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+@media (max-width: 480px) {
+  .loginPage {
+    padding: 12px;
+  }
+
+  .loginCard {
+    max-width: 100%;
+    padding: 20px;
+    gap: 10px;
+    border-radius: 10px;
+  }
+
+  .loginTitle {
+    font-size: 1.25rem;
+  }
+
+  .loginCard .loginInput,
+  .loginCard .loginButton {
+    font-size: 16px;
+    min-height: 44px;
+  }
+
+  .toggleButton {
+    padding: 6px 10px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 1024px) {
+  .loginCard {
+    max-width: 420px;
+    padding: 32px;
+  }
+
+  .loginTitle {
+    font-size: 1.6rem;
+  }
+
+  .loginCard .loginInput,
+  .loginCard .loginButton {
+    font-size: 1.05rem;
+    padding: 14px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .loginCard {
+    max-width: 560px;
+    padding: 44px;
+    gap: 18px;
+  }
+
+  .loginTitle {
+    font-size: 2.4rem;
+  }
+
+  .loginCard .loginInput,
+  .loginCard .loginButton {
+    font-size: 1.4rem;
+    padding: 18px 20px;
+  }
+
+  .toggleButton {
+    font-size: 1.1rem;
+  }
+}
+
+@media (pointer: coarse) {
+  .loginCard .loginInput,
+  .loginCard .loginButton {
+    min-height: 48px;
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .loginPage {
+    align-items: flex-start;
+    padding-top: 16px;
+  }
+
+  .loginCard {
+    padding: 16px;
+    gap: 8px;
+  }
+
+  .loginTitle {
+    margin-bottom: 4px;
+    font-size: 1.1rem;
+  }
+}

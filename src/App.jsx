@@ -14,6 +14,23 @@ import './styles/container.css';
 import './styles/header.css';
 import './styles/player.css';
 
+let junkPhrases = [
+  '| HiphopKit.com',
+  '- SongsLover.com',
+];
+
+function escapeRegex(text) {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function cleanTitle(title) {
+  let cleaned = title;
+  for (let junk of junkPhrases) {
+    cleaned = cleaned.replace(new RegExp(escapeRegex(junk), 'gi'), '');
+  }
+  return cleaned.replace(/\s*[-|]\s*$/, '').trim();
+}
+
 function formatTime(seconds) {
   let minutes = Math.floor(seconds / 60);
   let rest = Math.floor(seconds % 60);
@@ -33,23 +50,6 @@ async function toSongs(rows) {
       src: data?.signedUrl,
     };
   }));
-}
-
-let junkPhrases = [
-  '| HiphopKit.com',
-  '- SongsLover.com',
-];
-
-function escapeRegex(text) {
-  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function cleanTitle(title) {
-  let cleaned = title;
-  for (let junk of junkPhrases) {
-    cleaned = cleaned.replace(new RegExp(escapeRegex(junk), 'gi'), '');
-  }
-  return cleaned.replace(/\s*[-|]\s*$/, '').trim();
 }
 
 function App() {
@@ -98,34 +98,55 @@ function App() {
   let audioRef = useRef(null);
   let queueNumber = queue.length;
 
-  async function uploadSong(file) {
+  async function uploadSongs(files) {
     setUploading(true);
-    try {
-      let { data: userData } = await supabase.auth.getUser();
-      let userId = userData.user.id;
-      let path = userId + '/' + file.name;
+    for (let file of files) {
+      try {
+        let { data: userData } = await supabase.auth.getUser();
+        let userId = userData.user.id;
+        let path = userId + '/' + file.name;
 
-      let { error: uploadError } = await supabase.storage.from('music').upload(path, file);
-      if (uploadError) throw uploadError;
+        let { error: uploadError } = await supabase.storage.from('music').upload(path, file);
+        if (uploadError) throw uploadError;
 
-      let meta = await parseBlob(file);
+        let meta = await parseBlob(file);
 
-      let { error: insertError } = await supabase.from('songs').insert({
-        title: cleanTitle(meta.common.title || file.name.replace(/\.mp3$/i, '')),
-        artist: meta.common.artist || 'Unknown',
-        album: meta.common.album || 'Unknown',
-        date: meta.common.year ? String(meta.common.year) : '',
-        duration: formatTime(meta.format.duration),
-        file_path: path,
-      });
-      if (insertError) throw insertError;
-
-      await loadSongs();
-    } catch (error) {
-      console.log('Upload failed:', error.message ?? error);
-    } finally {
-      setUploading(false);
+        let { error: insertError } = await supabase.from('songs').insert({
+          title: cleanTitle(meta.common.title || file.name.replace(/\.mp3$/i, '')),
+          artist: meta.common.artist || 'Unknown',
+          album: meta.common.album || 'Unknown',
+          date: meta.common.year ? String(meta.common.year) : '',
+          duration: formatTime(meta.format.duration),
+          file_path: path,
+        });
+        if (insertError) throw insertError;
+      } catch (error) {
+        console.log('Upload failed for ' + file.name + ':', error.message ?? error);
+      }
     }
+    await loadSongs();
+    setUploading(false);
+  }
+
+  async function deleteSong(id) {
+    if (!window.confirm('Remove this song from your library?')) return;
+
+    let { data: row, error } = await supabase.from('songs').select('file_path').eq('id', id).single();
+    if (error) {
+      console.log(error.message);
+      return;
+    }
+
+    await supabase.storage.from('music').remove([row.file_path]);
+
+    let { error: deleteError } = await supabase.from('songs').delete().eq('id', id);
+    if (deleteError) {
+      console.log(deleteError.message);
+      return;
+    }
+
+    setQueue(removeFromQueue(id, queue));
+    await loadSongs();
   }
 
   function selectSong(id) {
@@ -185,27 +206,6 @@ function App() {
     setQueue(removeFromQueue(id, queue));
   }
 
-  async function deleteSong(id) {
-  if (!window.confirm('Remove this song from your library?')) return;
-
-  let { data: row, error } = await supabase.from('songs').select('file_path').eq('id', id).single();
-  if (error) {
-    console.log(error.message);
-    return;
-  }
-
-  await supabase.storage.from('music').remove([row.file_path]);
-
-  let { error: deleteError } = await supabase.from('songs').delete().eq('id', id);
-  if (deleteError) {
-    console.log(deleteError.message);
-    return;
-  }
-
-  setQueue(removeFromQueue(id, queue));
-  await loadSongs();
-}
-
   let queueSongs = queue.map((id) => songs.find((s) => s.id === id)).filter(Boolean);
   let currentId = queue[position];
 
@@ -239,7 +239,7 @@ function App() {
 
   return (
     <>
-      <Header queueNumber={queueNumber} onUpload={uploadSong} />
+      <Header queueNumber={queueNumber} onUpload={uploadSongs} />
       {loading && <p className='status'>Loading songs...</p>}
       {uploading && <p className='status'>Uploading songs...</p>}
 
@@ -277,6 +277,7 @@ function App() {
               onAddToQueue={queueLast}
               onPlayNext={queueNext}
               onRemove={queueRemove}
+              onDeleteSong={deleteSong}
               inQueue={true}
               currentId={currentId}
             />

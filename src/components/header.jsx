@@ -5,10 +5,9 @@ import {NavLink} from 'react-router-dom';
 export function Header({queueNumber, onUpload}){
     let fileInput = useRef(null);
 
-
     function handleFile() {
-      let file = fileInput.current.files[0];
-      if (file) onUpload(file);
+      let files = Array.from(fileInput.current.files);
+      if (files.length > 0) onUpload(files);
       fileInput.current.value = '';
     }
 
@@ -23,7 +22,7 @@ export function Header({queueNumber, onUpload}){
                         <img src={UploadIcon} alt='Upload Icon' />
                         Upload
                     </button>
-                    <input type='file' accept='.mp3,audio/mpeg' ref={fileInput} onChange={handleFile} hidden />
+                    <input type='file' accept='.mp3,audio/mpeg' multiple ref={fileInput} onChange={handleFile} hidden />
 
                     <button className='headerItem' aria-label='Menu'>
                     <svg width='16' height='16' viewBox='0 0 24 24' fill='white'>
