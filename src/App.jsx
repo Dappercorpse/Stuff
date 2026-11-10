@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { parseBlob } from 'music-metadata-browser';
-import { Buffer } from 'buffer';
 import { Login } from './components/login.jsx';
 import { supabase } from './supabase.js';
 import { Container } from './components/container';
@@ -14,8 +13,6 @@ import playImage from './assets/images/play-button.svg';
 import './styles/container.css';
 import './styles/header.css';
 import './styles/player.css';
-
-
 
 function formatTime(seconds) {
   let minutes = Math.floor(seconds / 60);
@@ -46,14 +43,19 @@ function App() {
   let [queue, setQueue] = useState([]);
   let [songs, setSongs] = useState([]);
   let [position, setPosition] = useState(0);
+  let [loading, setLoading] = useState(false);
+  let [uploading, setUploading] = useState(false);
 
   async function loadSongs() {
+    setLoading(true);
     let { data, error } = await supabase.from('songs').select('*');
     if (error) {
       console.log(error.message);
+      setLoading(false);
       return;
     }
     setSongs(await toSongs(data));
+    setLoading(false);
   }
 
   useEffect(function () {
@@ -79,32 +81,36 @@ function App() {
   let audioRef = useRef(null);
   let queueNumber = queue.length;
 
-async function uploadSong(file) {
-  try {
-    let { data: userData } = await supabase.auth.getUser();
-    let userId = userData.user.id;
-    let path = userId + '/' + file.name;
+  async function uploadSong(file) {
+    setUploading(true);
+    try {
+      let { data: userData } = await supabase.auth.getUser();
+      let userId = userData.user.id;
+      let path = userId + '/' + file.name;
 
-    let { error: uploadError } = await supabase.storage.from('music').upload(path, file);
-    if (uploadError) throw uploadError;
+      let { error: uploadError } = await supabase.storage.from('music').upload(path, file);
+      if (uploadError) throw uploadError;
 
-    let meta = await parseBlob(file);
+      let meta = await parseBlob(file);
 
-    let { error: insertError } = await supabase.from('songs').insert({
-      title: meta.common.title || file.name.replace(/\.mp3$/i, ''),
-      artist: meta.common.artist || 'Unknown',
-      album: meta.common.album || 'Unknown',
-      date: meta.common.year ? String(meta.common.year) : '',
-      duration: formatTime(meta.format.duration),
-      file_path: path,
-    });
-    if (insertError) throw insertError;
+      let { error: insertError } = await supabase.from('songs').insert({
+        title: meta.common.title || file.name.replace(/\.mp3$/i, ''),
+        artist: meta.common.artist || 'Unknown',
+        album: meta.common.album || 'Unknown',
+        date: meta.common.year ? String(meta.common.year) : '',
+        duration: formatTime(meta.format.duration),
+        file_path: path,
+      });
+      if (insertError) throw insertError;
 
-    await loadSongs();
-  } catch (error) {
-    console.log('Upload failed:', error.message ?? error);
+      await loadSongs();
+    } catch (error) {
+      console.log('Upload failed:', error.message ?? error);
+    } finally {
+      setUploading(false);
+    }
   }
-}
+
   function selectSong(id) {
     if (id === queue[position]) {
       togglePlay();
@@ -162,6 +168,27 @@ async function uploadSong(file) {
     setQueue(removeFromQueue(id, queue));
   }
 
+  async function deleteSong(id) {
+  if (!window.confirm('Remove this song from your library?')) return;
+
+  let { data: row, error } = await supabase.from('songs').select('file_path').eq('id', id).single();
+  if (error) {
+    console.log(error.message);
+    return;
+  }
+
+  await supabase.storage.from('music').remove([row.file_path]);
+
+  let { error: deleteError } = await supabase.from('songs').delete().eq('id', id);
+  if (deleteError) {
+    console.log(deleteError.message);
+    return;
+  }
+
+  setQueue(removeFromQueue(id, queue));
+  await loadSongs();
+}
+
   let queueSongs = queue.map((id) => songs.find((s) => s.id === id)).filter(Boolean);
   let currentId = queue[position];
 
@@ -196,6 +223,8 @@ async function uploadSong(file) {
   return (
     <>
       <Header queueNumber={queueNumber} onUpload={uploadSong} />
+      {loading && <p className='status'>Loading songs...</p>}
+      {uploading && <p className='status'>Uploading songs...</p>}
 
       <Routes>
         <Route
@@ -211,6 +240,7 @@ async function uploadSong(file) {
               onAddToQueue={queueLast}
               onPlayNext={queueNext}
               onRemove={queueRemove}
+              onDeleteSong={deleteSong}
               inQueue={false}
               currentId={currentId}
             />

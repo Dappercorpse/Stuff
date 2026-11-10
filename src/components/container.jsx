@@ -12,6 +12,7 @@ export function MusicContainer({
   onAddToQueue,
   onPlayNext,
   onRemove,
+  onDeleteSong,
   inQueue,
   currentId
 }) {
@@ -80,6 +81,9 @@ export function MusicContainer({
                 Remove From Queue
               </div>
             )}
+            <div className='contextItem removeFromLibrary' onClick={() => { onDeleteSong(menu.id); setMenu(null); }}>
+              Remove From Library
+            </div>
           </div>
         </>
       )}
@@ -98,6 +102,7 @@ export function Container({
   onAddToQueue,
   onPlayNext,
   onRemove,
+  onDeleteSong,
   inQueue,
   currentId
 }) {
@@ -131,6 +136,7 @@ export function Container({
         onAddToQueue={onAddToQueue}
         onPlayNext={onPlayNext}
         onRemove={onRemove}
+        onDeleteSong={onDeleteSong}
         inQueue={inQueue}
         currentId={currentId}
       />
