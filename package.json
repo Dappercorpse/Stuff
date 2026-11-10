@@ -1,8 +1,20 @@
 {
   "name": "music-app",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
+  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
+  "homepage": "https://github.com/Dappercorpse/Stuff#readme",
+  "bugs": {
+    "url": "https://github.com/Dappercorpse/Stuff/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dappercorpse/Stuff.git"
+  },
+  "license": "ISC",
+  "author": "",
   "type": "module",
+  "main": "app.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,8 +22,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "express": "^5.3.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.18.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
