@@ -5,10 +5,11 @@ import {NavLink} from 'react-router-dom';
 export function Header({queueNumber, onUpload}){
     let fileInput = useRef(null);
 
-    function handleFile(event) {
-        let file = event.target.files[0];
-        if (file) onUpload(file);
-        event.target.value = '';
+
+    function handleFile() {
+      let file = fileInput.current.files[0];
+      if (file) onUpload(file);
+      fileInput.current.value = '';
     }
 
     return(
