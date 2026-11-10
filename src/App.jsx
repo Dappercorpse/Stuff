@@ -1,8 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import { Login } from './components/login.jsx';
+import { supabase } from './supabase.js';
 import { Container } from './components/container';
 import { Header } from './components/header';
 import { Player } from './components/player';
+
 import { removeFromQueue, addToQueue, playNext } from './utils/queue.js';
 import pauseImage from './assets/images/pause-button.svg';
 import playImage from './assets/images/play-button.svg';
@@ -11,22 +14,44 @@ import './styles/header.css';
 import './styles/player.css';
 
 function App() {
+  let [session, setSession] = useState(null);
   let [isPlaying, setIsPlaying] = useState(false);
   let [currentIndex, setCurrentIndex] = useState(0);
   let [query, setQuery] = useState('');
   let [queue, setQueue] = useState([]);
   let [songs, setSongs]=useState([]);
   let [position, setPosition] = useState(0);
-  useEffect(
-    () => {
-      async function loadSongs() {
-        let response = await fetch('/api/songs');
-        let data = await response.json();
-        setSongs(data);
-      }
-      loadSongs();
-    }, []
-  )
+useEffect(function () {
+  if (!session) return;
+
+  async function loadSongs() {
+    let { data, error } = await supabase.from('songs').select('*');
+    if (error) {
+      console.log(error.message);
+      return;
+    }
+    setSongs(data.map((row) => ({
+      id: row.id,
+      title: row.title,
+      artist: row.artist,
+      album: row.album,
+      date: row.date,
+      duration: row.duration,
+      src: '/music/' + row.file_path,
+    })));
+  }
+  loadSongs();
+}, [session]);
+
+  useEffect(function () {
+  supabase.auth.getSession().then(({ data }) => setSession(data.session));
+  let { data: listener } = supabase.auth.onAuthStateChange((event, newSession) => {
+    setSession(newSession);
+  });
+  return function () {
+    listener.subscription.unsubscribe();
+  };
+}, []);
 
   let song = songs.find((s) => s.id === queue[position]);
   let audioRef = useRef(null);
@@ -105,18 +130,20 @@ useEffect(function () {
     };
 }, []);
   useEffect(function () {
-      audioRef.current.currentTime = 0;
+      if (audioRef.current) audioRef.current.currentTime = 0;
       if (isPlaying) {
-          audioRef.current.play();
+          audioRef.current?.play();
       }
   }, [position]);
 
   useEffect(function () {
     if (isPlaying) {
-      audioRef.current.play();
+      audioRef.current?.play();
     }
   }, [currentId, isPlaying]);
 
+  
+  if (!session) return <Login />;
   return (
     <>
       <Header queueNumber={queueNumber}/>
