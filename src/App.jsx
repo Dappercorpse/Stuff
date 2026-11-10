@@ -35,6 +35,23 @@ async function toSongs(rows) {
   }));
 }
 
+let junkPhrases = [
+  '| HiphopKit.com',
+  '- SongsLover.com',
+];
+
+function escapeRegex(text) {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function cleanTitle(title) {
+  let cleaned = title;
+  for (let junk of junkPhrases) {
+    cleaned = cleaned.replace(new RegExp(escapeRegex(junk), 'gi'), '');
+  }
+  return cleaned.replace(/\s*[-|]\s*$/, '').trim();
+}
+
 function App() {
   let [session, setSession] = useState(null);
   let [isPlaying, setIsPlaying] = useState(false);
@@ -94,7 +111,7 @@ function App() {
       let meta = await parseBlob(file);
 
       let { error: insertError } = await supabase.from('songs').insert({
-        title: meta.common.title || file.name.replace(/\.mp3$/i, ''),
+        title: cleanTitle(meta.common.title || file.name.replace(/\.mp3$/i, '')),
         artist: meta.common.artist || 'Unknown',
         album: meta.common.album || 'Unknown',
         date: meta.common.year ? String(meta.common.year) : '',
