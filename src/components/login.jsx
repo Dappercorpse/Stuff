@@ -21,8 +21,11 @@ export function Login() {
   }
 
   async function signUp() {
-    let { error } = await supabase.auth.signUp({ email: toEmail(id), password })
-    setMessage(error ? error.message : 'Account created. You can sign in now.')
+    let { error } = await supabase.auth.signUp({
+      email: toEmail(id),
+      password,
+      options: { data: { login_id: id.trim().toLowerCase() } },
+    });
   }
 
   return (

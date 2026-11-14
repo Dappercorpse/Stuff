@@ -97,7 +97,8 @@ function App() {
   let song = songs.find((s) => s.id === queue[position]);
   let audioRef = useRef(null);
   let queueNumber = queue.length;
-
+  let loginId = session.user.email.replace('@example.com', '');
+  
   async function uploadSongs(files) {
     setUploading(true);
     for (let file of files) {
@@ -239,7 +240,7 @@ function App() {
 
   return (
     <>
-      <Header queueNumber={queueNumber} onUpload={uploadSongs} />
+      <Header queueNumber={queueNumber} onUpload={uploadSongs} loginId={loginId}/>
       {loading && <p className='status'>Loading songs...</p>}
       {uploading && <p className='status'>Uploading songs...</p>}
 
