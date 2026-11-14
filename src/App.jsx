@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { parseBlob } from 'music-metadata-browser';
 import { Login } from './components/login.jsx';
+import { ChangePassword } from './components/changePassword.jsx';
 import { supabase } from './supabase.js';
 import { Container } from './components/container';
 import { Header } from './components/header';
@@ -63,6 +64,42 @@ function App() {
   let [loading, setLoading] = useState(false);
   let [uploading, setUploading] = useState(false);
 
+  let location = useLocation();
+  let onChangePage = location.pathname === '/change-password';
+
+  async function checkPassword() {
+    let password = window.prompt('Enter your password to continue:');
+    if (!password) return false;
+
+    let { error } = await supabase.auth.signInWithPassword({
+      email: session.user.email,
+      password,
+    });
+    if (error) {
+      window.alert('Wrong password.');
+      return false;
+    }
+    return true;
+  }
+
+  async function changePassword(currentPassword, newPassword) {
+    let { error: signInError } = await supabase.auth.signInWithPassword({
+      email: session.user.email,
+      password: currentPassword,
+    });
+    if (signInError) return 'Current password is wrong.';
+
+    let { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) return error.message;
+    return 'Password changed.';
+  }
+
+  async function logOut() {
+    if (!window.confirm('Are you sure you want to logout')) return;
+    if (!(await checkPassword())) return;
+    await supabase.auth.signOut();
+  }
+
   async function loadSongs() {
     setLoading(true);
     let { data, error } = await supabase.from('songs').select('*');
@@ -97,8 +134,8 @@ function App() {
   let song = songs.find((s) => s.id === queue[position]);
   let audioRef = useRef(null);
   let queueNumber = queue.length;
-  let loginId = session.user.email.replace('@example.com', '');
-  
+  let loginId = session?.user?.email?.replace('@example.com', '');
+
   async function uploadSongs(files) {
     setUploading(true);
     for (let file of files) {
@@ -150,6 +187,30 @@ function App() {
     await loadSongs();
   }
 
+  async function deleteAccount() {
+    if (!window.confirm('Delete your account and all your songs? This cannot be undone.')) return;
+    if (!(await checkPassword())) return;
+
+    let { data: userData } = await supabase.auth.getUser();
+    let userId = userData.user.id;
+
+    let { data: files } = await supabase.storage.from('music').list(userId);
+    let paths = (files ?? []).map((file) => userId + '/' + file.name);
+    if (paths.length > 0) {
+      await supabase.storage.from('music').remove(paths);
+    }
+
+    await supabase.from('songs').delete().eq('user_id', userId);
+
+    let { error } = await supabase.functions.invoke('delete-account');
+    if (error) {
+      console.log('Delete failed:', error.message);
+      return;
+    }
+
+    await supabase.auth.signOut();
+  }
+
   function selectSong(id) {
     if (id === queue[position]) {
       togglePlay();
@@ -173,6 +234,7 @@ function App() {
 
   function togglePlay() {
     let audio = audioRef.current;
+    if (!audio) return;
 
     if (audio.paused) {
       audio.play();
@@ -240,9 +302,17 @@ function App() {
 
   return (
     <>
-      <Header queueNumber={queueNumber} onUpload={uploadSongs} loginId={loginId}/>
-      {loading && <p className='status'>Loading songs...</p>}
-      {uploading && <p className='status'>Uploading songs...</p>}
+      {!onChangePage && (
+        <Header
+          queueNumber={queueNumber}
+          onUpload={uploadSongs}
+          loginId={loginId}
+          onLogOut={logOut}
+          onDelete={deleteAccount}
+        />
+      )}
+      {!onChangePage && loading && <p className='status'>Loading songs...</p>}
+      {!onChangePage && uploading && <p className='status'>Uploading songs...</p>}
 
       <Routes>
         <Route
@@ -284,16 +354,20 @@ function App() {
             />
           }
         />
+
+        <Route path='/change-password' element={<ChangePassword onChange={changePassword} />} />
       </Routes>
 
-      <Player
-        song={song}
-        audioRef={audioRef}
-        isPlaying={isPlaying}
-        onToggle={togglePlay}
-        onNext={nextSong}
-        onPrev={prevSong}
-      />
+      {!onChangePage && (
+        <Player
+          song={song}
+          audioRef={audioRef}
+          isPlaying={isPlaying}
+          onToggle={togglePlay}
+          onNext={nextSong}
+          onPrev={prevSong}
+        />
+      )}
     </>
   );
 }

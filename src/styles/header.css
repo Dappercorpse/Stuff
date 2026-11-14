@@ -255,3 +255,24 @@ button {
   background: rgb(46, 46, 46);
   border-color: rgb(58, 58, 58);
 }
+
+.accountClicked .changePW {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  color: rgb(230, 230, 230);
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  text-align: left;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.accountClicked .changePW:hover {
+  background: rgb(46, 46, 46);
+  border-color: rgb(58, 58, 58);
+}

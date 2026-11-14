@@ -4,7 +4,7 @@ import {NavLink} from 'react-router-dom';
 import userIcon from '../assets/images/userIcon.svg';
 
 
-export function Header({queueNumber, onUpload, loginId}){
+export function Header({queueNumber, onUpload, loginId, onLogOut, onDelete}){
     let [accountDet, setAccountDet] = useState(false);
     let fileInput = useRef(null);
     
@@ -34,8 +34,9 @@ export function Header({queueNumber, onUpload, loginId}){
                   <p>{loginId}</p>
                   <button className='accountClose' onClick={() => setAccountDet(false)} aria-label='Close'>×</button>
                 </div>
-                <button>Log out</button>
-                <button>Delete Account</button>
+                <button onClick={onLogOut}>Log out</button>
+                <NavLink className='changePW' to='/change-password'>Change Password</NavLink>
+                <button onClick={onDelete}>Delete Account</button>
               </div>
             }
                 <NavLink to='/' end className='headerItem js-header-item'>Library</NavLink>
