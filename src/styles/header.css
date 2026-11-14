@@ -7,7 +7,6 @@ body {
 button {
   cursor: pointer;
 }
-
 .header {
   display: flex;
   align-items: center;
@@ -18,30 +17,7 @@ button {
   border: 1px solid rgb(58, 58, 58);
   border-radius: 12px;
   margin-bottom: 16px;
-}
-
-.headerItem {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 18px;
-  background: transparent;
-  color: rgb(230, 230, 230);
-  font-family: Arial, sans-serif;
-  font-size: 16px;
-  border: 1px solid rgb(58, 58, 58);
-  border-radius: 8px;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.headerItem:hover {
-  background: rgb(46, 46, 46);
-}
-
-.headerItem.active {
-  color: rgb(255, 255, 255);
-  border-color: rgb(106, 169, 255);
+  box-sizing: border-box;
 }
 
 .tabs,
@@ -49,16 +25,68 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
 }
+
+.headerItem {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: transparent;
+  color: rgb(230, 230, 230);
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  white-space: nowrap;
+  border: 1px solid rgb(58, 58, 58);
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
 
 .headerItem img {
   width: 18px;
   height: 18px;
 }
+
+.accountIcon {
+  width: 40px;
+  height: 40px;
+  padding: 6px;
+  border-radius: 50%;
+  background: transparent;
+  box-sizing: border-box;
+  filter: invert(1);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Tablets */
+@media (min-width: 481px) and (max-width: 1024px) {
+  .header {
+    padding: 14px 20px;
+  }
+
+  .headerItem {
+    font-size: 15px;
+    padding: 9px 14px;
+  }
+
+  .accountIcon {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* Phones */
 @media (max-width: 480px) {
   .header {
     flex-wrap: wrap;
     gap: 8px;
+    padding: 10px 12px;
   }
 
   .tabs,
@@ -69,5 +97,69 @@ button {
 
   .headerItem {
     font-size: 13px;
+    padding: 8px 12px;
+    gap: 6px;
   }
+
+  .headerItem img {
+    width: 16px;
+    height: 16px;
+  }
+
+  .accountIcon {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+/* Large screens and TVs */
+@media (min-width: 1600px) {
+  .header {
+    padding: 20px 28px;
+  }
+
+  .headerItem {
+    font-size: 22px;
+    padding: 14px 24px;
+  }
+
+  .headerItem img {
+    width: 26px;
+    height: 26px;
+  }
+
+  .accountIcon {
+    width: 56px;
+    height: 56px;
+    padding: 10px;
+  }
+}
+
+/* Touch screens: larger tap targets */
+@media (pointer: coarse) {
+  .headerItem,
+  .accountIcon {
+    min-height: 44px;
+  }
+}
+
+/* Phones in landscape */
+@media (max-height: 500px) and (orientation: landscape) {
+  .header {
+    padding: 6px 12px;
+  }
+
+  .headerItem {
+    padding: 6px 12px;
+  }
+
+  .accountIcon {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+
+.headerItem:hover {
+  background: rgb(46, 46, 46);
 }

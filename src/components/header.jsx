@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import UploadIcon from '../assets/images/UploadIcon.png'
 import {NavLink} from 'react-router-dom';
+import userIcon from '../assets/images/userIcon.svg';
 
 export function Header({queueNumber, onUpload}){
     let fileInput = useRef(null);
@@ -11,9 +12,11 @@ export function Header({queueNumber, onUpload}){
       fileInput.current.value = '';
     }
 
+    
     return(
         <div className='header'>
             <div className='tabs'>
+                <img className='accountIcon'src={userIcon} alt="" />
                 <NavLink to='/' end className='headerItem js-header-item'>Library</NavLink>
                 <NavLink to='/queue' className='headerItem js-header-item'>Queue({queueNumber})</NavLink>
             </div>
